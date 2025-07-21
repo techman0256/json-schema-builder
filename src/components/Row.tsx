@@ -8,68 +8,76 @@ import { useEffect, useState } from "react";
 export type ValueType = "string" | "number" | "nested";
 
 export interface RowValue {
-    lablel : 'string';
+    label : 'string';
     type : ValueType;
+    children? : any;
 }
 
 interface RowProps {
   path: string[];               // <- Add this
+  uid: string;
   onDelete: () => void;
   onKeyChange: (oldKey: string, newKey: string) => void;
   onTypeChange: (key: string, newType: ValueType) => void;
   defaultKey?: string;
   defaultType?: ValueType;
+  children?: React.ReactNode;
 }
 
 
-const Row = ({onDelete, onKeyChange, onTypeChange, defaultKey = "", defaultType = "string"} : RowProps) => {
+const Row = ({onDelete, onKeyChange, onTypeChange, uid, defaultKey = "", defaultType = "string", children} : RowProps) => {
     const [keyInput, setKeyInput] = useState(defaultKey);
     const [valueType, setValueType] = useState<ValueType>(defaultType);
     
     useEffect(() => {
-        console.log("this is row component", keyInput, valueType);
-        
+        console.log("this is row component", keyInput, valueType);        
     }, [])
 
     const handleKeyChange = (val: string) => {
-        // console.log(
-        //     "This has been changes ", val
-        // );
+        console.log(
+            "This has been changes ", val, uid
+        );
         setKeyInput(val);
-        onKeyChange(val, valueType);
+        onKeyChange(uid, val);
     };
 
     const handleTypeChange = (val: ValueType) => {
         setValueType(val);
-        onTypeChange(keyInput, val);
+        onTypeChange(uid, val);
     };
 
     return (
-        <div className="flex items-center gap-4 border p-4 rounded-lg mb-2">
-        {/* Key Input */}
-        <Input
-            placeholder={""}
-            value={keyInput}
-            onChange={(e) => handleKeyChange(e.target.value)}
-            className="w-1/3"
-        />
+        <div>
 
-        {/* Value Type Dropdown */}
-        <Select value={valueType} onValueChange={handleTypeChange}>
-            <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder="Select type" />
-            </SelectTrigger>
-            <SelectContent>
-                <SelectItem value="string">String</SelectItem>
-                <SelectItem value="number">Number</SelectItem>
-                <SelectItem value="nested">Nested</SelectItem>
-            </SelectContent>
-        </Select>
+            <div className="flex items-center gap-4 border p-4 rounded-lg mb-2">
+                {/* Key Input */}
+                <Input
+                    placeholder={""}
+                    value={keyInput}
+                    onChange={(e) => handleKeyChange(e.target.value)}
+                    className="w-1/3"
+                />
 
-        {/* Delete Button */}
-        <Button variant="destructive" size="icon" onClick={onDelete}>
-            <Trash2 size={18} />
-        </Button>
+                {/* Value Type Dropdown */}
+                <Select value={valueType} onValueChange={handleTypeChange}>
+                    <SelectTrigger className="w-[160px]">
+                    <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="string">String</SelectItem>
+                        <SelectItem value="number">Number</SelectItem>
+                        <SelectItem value="nested">Nested</SelectItem>
+                    </SelectContent>
+                </Select>
+
+                {/* Delete Button */}
+                <Button variant="destructive" size="icon" onClick={onDelete}>
+                    <Trash2 size={18} />
+                </Button>
+            </div>
+            <div className="ml-[40px]">
+                {children}
+            </div>
         </div>
     )
 }

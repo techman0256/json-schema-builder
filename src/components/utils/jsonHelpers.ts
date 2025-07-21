@@ -18,9 +18,9 @@ export const updateNestedValue = <T = any>(obj: T, path: string[], updater: (pre
 
 
 // delete key at nested path immutably
-export const deleteNestedKey = (obj: any, path: string[], keyToDelete: string) => {
-  const target = getValueAtPath(obj, path);
-  const {[keyToDelete]: _, ...rest} = target;
+// export const deleteNestedKey = (obj: any, path: string[], keyToDelete: string) => {
+//   const target = getValueAtPath(obj, path);
+//   const {[keyToDelete]: _, ...rest} = target;
 
-  return updateNestedValue(obj, path, () => rest);
-};
+//   return updateNestedValue(obj, path, () => rest);
+// };
