@@ -3,7 +3,7 @@ import { Input } from "./ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export type ValueType = "string" | "number" | "nested";
 
@@ -28,15 +28,8 @@ interface RowProps {
 const Row = ({onDelete, onKeyChange, onTypeChange, uid, defaultKey = "", defaultType = "string", children} : RowProps) => {
     const [keyInput, setKeyInput] = useState(defaultKey);
     const [valueType, setValueType] = useState<ValueType>(defaultType);
-    
-    useEffect(() => {
-        console.log("this is row component", keyInput, valueType);        
-    }, [])
 
     const handleKeyChange = (val: string) => {
-        console.log(
-            "This has been changes ", val, uid
-        );
         setKeyInput(val);
         onKeyChange(uid, val);
     };

@@ -1,7 +1,6 @@
 import { Button } from "./ui/button";
 import Row from "@/components/Row";
 import { getValueAtPath, updateNestedValue } from "@/components/utils/jsonHelpers";
-import { useEffect } from "react";
 import type { ValueType, RowValue } from "@/components/Row"
 
 interface JSONObjectProps {
@@ -22,8 +21,6 @@ const JSONObject = ({ schema, setSchema, path }: JSONObjectProps) => {
     };
 
     const handleKeyRename = (oldKey: string, newKey: string) => {
-        // console.log("running handlekey rename");
-        
         const updatedSchema = updateNestedValue(schema, path, (prev: any) => {
             const node = prev[oldKey];
             const rest = Object.fromEntries(
@@ -39,8 +36,6 @@ const JSONObject = ({ schema, setSchema, path }: JSONObjectProps) => {
                 },
             };
         });
-        // console.log("running set schema", updatedSchema);
-        
         setSchema(updatedSchema);
     };
 
@@ -50,15 +45,12 @@ const JSONObject = ({ schema, setSchema, path }: JSONObjectProps) => {
             const rest = Object.fromEntries(
                 Object.entries(prev).filter(([k]) => k !== key)
             );
-            if (!node) return prev;                // key not found—no change
+            if (!node) return prev;
             
             const updatedNode: any = {
                 ...node,
                 type: newType,
-            };
-            // console.log("this is updated node", updatedNode);
-            // console.log("this is rest ", rest);
-            
+            };            
             
             if (newType === 'nested') {
                 updatedNode.children = node.children || {};
@@ -73,7 +65,6 @@ const JSONObject = ({ schema, setSchema, path }: JSONObjectProps) => {
                 [key]: updatedNode,
             };
         });
-        // console.log("this is the updated schema", updatedSchema);
         
         setSchema(updatedSchema);
     };
@@ -101,10 +92,7 @@ const JSONObject = ({ schema, setSchema, path }: JSONObjectProps) => {
             Object.entries(currentObject).map(([key, value]) => {
                 const rowValue = value as RowValue;
                 return (
-                rowValue.type === 'nested'
-                    ? 
-                    <div> 
-                        <Row
+                    <Row
                         key={key}
                         uid={key}
                         path={[...path, key]}
@@ -113,35 +101,25 @@ const JSONObject = ({ schema, setSchema, path }: JSONObjectProps) => {
                         onKeyChange={handleKeyRename}
                         onTypeChange={handleTypeChange}
                         onDelete={() => handleDelete(key)}
-                        > 
-                            <JSONObject key={key} schema={rowValue.children} 
-                                setSchema={(updatedChildren) => {
-                                    console.log("this is updated children", updatedChildren);
-                                    
-                                    const updatedSchema = updateNestedValue(schema, path, (prev: any) => ({
-                                        ...prev,
-                                        [key]: {
+                    > 
+                        {rowValue.type === 'nested' && (
+                            <JSONObject
+                            schema={rowValue.children}
+                            setSchema={(updatedChildren) => {
+                                const updatedSchema = updateNestedValue(schema, path, (prev: any) => ({
+                                    ...prev,
+                                    [key]: {
                                         ...prev[key],
                                         children: updatedChildren,
-                                        },
-                                    }));
-                                    console.log("upadeted schema is this ", updatedSchema);
-                                    
-                                    setSchema(updatedSchema);
-                                }} 
-                                path={[...path, key]} />
-                        </Row>
-                    </div>
-                    : <Row
-                        key={key}
-                        uid={key}
-                        path={[...path, key]}
-                        defaultKey={rowValue.label}
-                        defaultType={rowValue.type}
-                        onKeyChange={handleKeyRename}
-                        onTypeChange={handleTypeChange}
-                        onDelete={() => handleDelete(key)}
-                    />
+                                    },
+                                }));
+
+                                setSchema(updatedSchema);
+                            }}
+                            path={[...path, key]}
+                            />
+                        )}
+                    </Row>
                 );
             })
             }
